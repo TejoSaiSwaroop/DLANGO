@@ -97,26 +97,66 @@ inputTextElem.addEventListener("input", (e) => {
 const uploadDocument = document.querySelector("#upload-document"),
   uploadTitle = document.querySelector("#upload-title");
 
-uploadDocument.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if ( //target files which are possible to add 
-    file.type === "application/pdf" ||
-    file.type === "text/plain" ||
-    file.type === "application/msword" ||
-    file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
+  uploadDocument.addEventListener("change", (e) => {
+    const file = e.target.files[0];
     uploadTitle.innerHTML = file.name;
     const reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = (e) => {
-      inputTextElem.value = e.target.result;
-      translate();
-    };
-  } else {  //Exception if error occurs
-    alert("Please upload a valid file");
-  }
-});
-
+  
+    if (file.type === "text/plain") {
+      reader.onload = (e) => {
+        inputTextElem.value = e.target.result;
+        translate();
+      };
+      reader.readAsText(file);
+    } else if (file.type === "application/msword" ||
+               file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+      reader.onload = (e) => {
+        mammoth.extractRawText({arrayBuffer: e.target.result})
+          .then(function(resultText) {
+            inputTextElem.value = resultText.value;
+            translate();
+          })
+          .catch(function(err) {
+            console.log('Error reading Word file:', err);
+          });
+      };
+      reader.readAsArrayBuffer(file);
+    } else if (file.type === "application/pdf") {
+      console.log("Processing PDF file");
+      reader.onload = (e) => {
+        console.log("FileReader result:", e.target.result);
+        const typedarray = new Uint8Array(e.target.result);
+        pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+          // Get the first page
+          pdf.getPage(1).then(function(page) {
+            page.getTextContent().then(function(textContent) {
+              let textItems = textContent.items;
+              let finalString = '';
+    
+              for (let i = 0; i < textItems.length; i++) {
+                let item = textItems[i];
+                finalString += item.str + ' ';
+              }
+    
+              // Now finalString contains the text content of the first page of the PDF
+              console.log("Final string:", finalString);
+              inputTextElem.value = finalString;
+              translate();
+            }).catch(function(error) {
+              console.log("Error getting text content:", error);
+            });
+          }).catch(function(error) {
+            console.log("Error getting page:", error);
+          });
+        }).catch(function(error) {
+          console.log("Error getting document:", error);
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      alert("Please upload a valid file");
+    }
+  });
 const downloadBtn = document.querySelector("#download-btn"); //variable which leads to download button
 
 downloadBtn.addEventListener("click", (e) => {
