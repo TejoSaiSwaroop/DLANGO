@@ -1,6 +1,7 @@
 const dropdowns = document.querySelectorAll(".dropdown-container"),//dropdown
   inputLanguageDropdown = document.querySelector("#input-language"),//input language dropdown menu 
   outputLanguageDropdown = document.querySelector("#output-language");//output language dropdown menu
+              // Made by Tejo Sai Swaroop
 
 function populateDropdown(dropdown, options) {
   dropdown.querySelector("ul").innerHTML = "";//list of languages
@@ -8,6 +9,7 @@ function populateDropdown(dropdown, options) {
     const li = document.createElement("li");
     const title = option.name + " (" + option.native + ")";//menu items(languages)
     li.innerHTML = title;
+              // Made by Tejo Sai Swaroop
     li.dataset.value = option.code;
     li.classList.add("option");
     dropdown.querySelector("ul").appendChild(li);//append to add elements
@@ -25,6 +27,7 @@ dropdowns.forEach((dropdown) => {
   dropdown.querySelectorAll(".option").forEach((item) => {//option works as a thread
     item.addEventListener("click", (e) => {//removes active class from current dropdowns
       //remove active class from current dropdowns
+              // Made by Tejo Sai Swaroop
       dropdown.querySelectorAll(".option").forEach((item) => {
         item.classList.remove("active");
       });
@@ -54,6 +57,7 @@ swapBtn.addEventListener("click", (e) => {//used to swap
   const temp = inputLanguage.innerHTML; //stored in a temporary variable
   inputLanguage.innerHTML = outputLanguage.innerHTML;
   outputLanguage.innerHTML = temp;//swapped
+              // Made by Tejo Sai Swaroop
 
   const tempValue = inputLanguage.dataset.value;//stored in another temporary value variable 
   inputLanguage.dataset.value = outputLanguage.dataset.value;
@@ -84,6 +88,7 @@ function translate() {
     })
     .catch((error) => {
       console.log(error);//Exception Handling
+              // Made by Tejo Sai Swaroop
     });
 }
 inputTextElem.addEventListener("input", (e) => {
@@ -96,6 +101,7 @@ inputTextElem.addEventListener("input", (e) => {
 
 const uploadDocument = document.querySelector("#upload-document"),
   uploadTitle = document.querySelector("#upload-title");
+              // Made by Tejo Sai Swaroop
 
   uploadDocument.addEventListener("change", (e) => {
     const file = e.target.files[0];
@@ -115,6 +121,7 @@ const uploadDocument = document.querySelector("#upload-document"),
           .then(function(resultText) {
             inputTextElem.value = resultText.value;
             translate();
+              // Made by Tejo Sai Swaroop
           })
           .catch(function(err) {
             console.log('Error reading Word file:', err);
@@ -137,7 +144,7 @@ const uploadDocument = document.querySelector("#upload-document"),
                 let item = textItems[i];
                 finalString += item.str + ' ';
               }
-    
+              // Made by Tejo Sai Swaroop
               // Now finalString contains the text content of the first page of the PDF
               console.log("Final string:", finalString);
               inputTextElem.value = finalString;
